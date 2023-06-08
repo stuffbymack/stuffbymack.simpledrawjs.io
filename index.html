@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <main>
+        <h2>SimpleDrawJS</h2>
+        <p>JavaScript implementation of <a href="https://github.com/stuffbymack/SimpleDraw">SimpleDraw</a></p>
+        <canvas id="paint-canvas" width="256" height="256"></canvas><br>
+        <button id="save-btn">Export</button>
+        <button id="clear-btn">Clear</button>
+        <select id="canvas-size">
+            <option selected hidden disabled>Auto</option>
+            <option value="256">Mobile</option>
+            <option value="512">Desktop</option>
+        </select><br><br>
+        <div id="color-palette"></div><br>
+    </main>
+
+    <script>
+        const isMobile = /iPhone|iPad|iPod|Android|Mobi/i.test(navigator.userAgent);
+        const canvasSize = isMobile ? 256 : 512;
+        const colors = ['#000000', '#464646', '#787878', '#990030', '#ed1c24', '#ff7e00', '#ffc20e', '#fff200', '#a8e61d', '#22b14c', '#00b7ef', '#4d6df3', '#2f3699', '#6f3198', '#ffffff', '#dcdcdc', '#b4b4b4', '#9c5a3c', '#ffa3b1', '#e5aa7a', '#f5e49c', '#fffdbd', '#d3f9bc', '#9dbb61', '#99d9ea', '#7086d1', '#546d8e', '#b5a5d5'];
+        const canvas = document.getElementById('paint-canvas');
+        canvas.width = canvasSize;
+        canvas.height = canvasSize;
+        const ctx = canvas.getContext('2d');
+        const saveBtn = document.getElementById('save-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        
+        
+        const colorPalette = document.getElementById('color-palette');
+
+        let painting = false;
+    ctx.strokeStyle = colors[0]; // default color is the first one
+
+    // create a div for each color and append to the color palette
+    colors.forEach((color) => {
+        const colorDiv = document.createElement('div');
+        colorDiv.style.backgroundColor = color;
+        colorDiv.classList.add('color');
+        colorPalette.appendChild(colorDiv);
+
+        colorDiv.addEventListener('click', () => {
+            ctx.strokeStyle = color;
+        });
+    });
+
+    function startDraw(e) {
+        painting = true;
+        draw(e);
+    }
+
+    function endDraw() {
+        painting = false;
+        ctx.beginPath();
+    }
+
+    function draw(e) {
+        if (!painting) return;
+        ctx.lineWidth = 15;
+        ctx.lineCap = 'round';
+
+        let clientX, clientY;
+        if (e.type === 'touchmove') {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        } else {
+            clientX = e.clientX;
+            clientY = e.clientY;
+        }
+
+        ctx.lineTo(clientX - canvas.offsetLeft, clientY - canvas.offsetTop);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(clientX - canvas.offsetLeft, clientY - canvas.offsetTop);
+    }
+
+    saveBtn.addEventListener('click', () => {
+    // create a new canvas
+        const newCanvas = document.createElement('canvas');
+        const newCtx = newCanvas.getContext('2d');
+
+        newCanvas.width = canvas.width;
+        newCanvas.height = canvas.height;
+
+    // Draw a white rectangle covering the entire canvas
+        newCtx.fillStyle = '#FFFFFF';
+        newCtx.fillRect(0, 0, newCanvas.width, newCanvas.height);
+
+    // Draw the current canvas on top of the white rectangle
+        newCtx.drawImage(canvas, 0, 0);
+
+    // Export the new canvas as an image
+        const dataUrl = newCanvas.toDataURL('image/png');
+        const newTab = window.open('about:blank', 'image from canvas');
+        newTab.document.write("<img src='" + dataUrl + "' alt='Canvas Image'/>");
+    });
+
+
+    clearBtn.addEventListener('click', () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+
+    const sizeDropdown = document.getElementById('canvas-size');
+
+    sizeDropdown.addEventListener('change', function() {
+        canvas.width = this.value;
+        canvas.height = this.value;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mouseup', endDraw);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('touchstart', startDraw);
+    canvas.addEventListener('touchend', endDraw);
+    canvas.addEventListener('touchmove', draw, {passive: false});
+</script>
+
+
+<style>
+    /* Automatically wrap all elements at 750px width */
+    @media (min-width: 520px) {
+      body {
+        width: 524px;
+    }
+}
+html, body {
+    margin: 0 auto;
+    height: 100%; 
+    overflow: hidden;
+}
+#paint-canvas {
+    border: 1px solid black;
+    background-color: white;
+}
+
+.color {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin: 2px;
+    border: 1px solid black;
+}
+</style>
+</body>
+</html>
