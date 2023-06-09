@@ -1,18 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
+     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body {
-            width: 524px;
-        }
-        
         html, body {
-            margin: 0 auto;
-            height: 100%; 
-            overflow: hidden;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10;
+            padding: 10;
         }
 
+        body {
+            width: 100%;
+        }
+        
         #paint-canvas {
+            display: block;
             border: 1px solid black;
             background-color: white;
         }
@@ -29,6 +34,7 @@
 <body>
     <main>
         <h2>SimpleDrawJS</h2>
+        <button onclick="goBack()">Go Back</button> <!-- JavaScript back button -->
         <p>JavaScript implementation of <a href="https://github.com/stuffbymack/SimpleDraw">SimpleDraw</a></p>
         <canvas id="paint-canvas" width="512" height="512"></canvas><br>
         <button id="save-btn">Export</button>
@@ -111,6 +117,11 @@
             e.preventDefault();
             draw(e);
         }, { passive: false });
+
+        // JavaScript back button function
+        function goBack() {
+            window.history.back();
+        }
     </script>
 </body>
 </html>
