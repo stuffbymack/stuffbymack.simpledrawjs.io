@@ -1,17 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=.70">
     <style>
-        body {
-            width: 514px;
-        }
-        
         html, body {
-            margin: 0 auto;
-            height: 100%; 
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 0;
             overflow: hidden;
         }
 
+        body {
+            width: 514px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
         #paint-canvas {
             border: 1px solid black;
             background-color: white;
