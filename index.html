@@ -44,26 +44,27 @@
 </head>
 <body>
     <main>
-        <h2>SimpleDrawJS</h2>
-        <button onclick="goBack()">Go Back</button> <!-- JavaScript back button -->
+        <button onclick="goBack()">Go Back</button> <!-- Added JavaScript back button -->
+        <h2>SimpleDrawJS.io</h2>
         <p>JavaScript implementation of SimpleDraw, view on <a href="https://github.com/stuffbymack/stuffbymack.simpledrawjs.io">GitHub</a></p>
         <canvas id="paint-canvas" width="512" height="512"></canvas><br>
-        <div id="button-container">
+         <div id="button-container">
             <p><button id="save-btn">Export</button>
                 <button id="clear-btn">Clear</button></p>
             </div>
             <div id="color-palette"></div><br>
-        </main>
+    </main>
 
-        <script>
-            const colors = ['#000000', '#464646', '#787878', '#990030', '#ed1c24', '#ff7e00', '#ffc20e', '#fff200', '#a8e61d', '#22b14c', '#00b7ef', '#4d6df3', '#2f3699', '#6f3198', '#ffffff', '#dcdcdc', '#b4b4b4', '#9c5a3c', '#ffa3b1', '#e5aa7a', '#f5e49c', '#fffdbd', '#d3f9bc', '#9dbb61', '#99d9ea', '#7086d1', '#546d8e', '#b5a5d5'];
-            const canvas = document.getElementById('paint-canvas');
-            const ctx = canvas.getContext('2d');
-            const saveBtn = document.getElementById('save-btn');
-            const clearBtn = document.getElementById('clear-btn');
-            const colorPalette = document.getElementById('color-palette');
+    <script>
+        const colors = ['#000000', '#464646', '#787878', '#990030', '#ed1c24', '#ff7e00', '#ffc20e', '#fff200', '#a8e61d', '#22b14c', '#00b7ef', '#4d6df3', '#2f3699', '#6f3198', '#ffffff', '#dcdcdc', '#b4b4b4', '#9c5a3c', '#ffa3b1', '#e5aa7a', '#f5e49c', '#fffdbd', '#d3f9bc', '#9dbb61', '#99d9ea', '#7086d1', '#546d8e', '#b5a5d5'];
+        const canvas = document.getElementById('paint-canvas');
+        const ctx = canvas.getContext('2d');
+        const saveBtn = document.getElementById('save-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const colorPalette = document.getElementById('color-palette');
 
-            let painting = false;
+        let painting = false;
+        let points = [];
         ctx.strokeStyle = colors[0]; // default color is the first one
 
         colors.forEach((color) => {
@@ -81,27 +82,40 @@
 
         function startDraw(e) {
             painting = true;
+            points = [];
             draw(e);
         }
 
         function endDraw() {
             painting = false;
+            points.length = 0;
             ctx.beginPath();
         }
 
         function draw(e) {
             if (!painting) return;
-            ctx.lineWidth = 15;
+            ctx.lineWidth = 15; // Change the brush size to 15
             ctx.lineCap = 'round';
 
             const { clientX, clientY } = e.touches ? e.touches[0] : e;
             const offsetX = clientX - canvas.offsetLeft;
             const offsetY = clientY - canvas.offsetTop;
+            points.push({ x: offsetX, y: offsetY });
 
-            ctx.lineTo(offsetX, offsetY);
-            ctx.stroke();
             ctx.beginPath();
-            ctx.moveTo(offsetX, offsetY);
+            ctx.moveTo(points[0].x, points[0].y);
+
+            for (let i = 1; i < points.length - 2; i++) {
+                let c = (points[i].x + points[i + 1].x) / 2;
+                let d = (points[i].y + points[i + 1].y) / 2;
+                ctx.quadraticCurveTo(points[i].x, points[i].y, c, d);
+            }
+
+            if (points.length > 1) {
+                ctx.quadraticCurveTo(points[points.length - 2].x, points[points.length - 2].y, points[points.length - 1].x, points[points.length - 1].y);
+            }
+            
+            ctx.stroke();
         }
 
         saveBtn.addEventListener('click', () => {
