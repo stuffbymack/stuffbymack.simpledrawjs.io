@@ -12,7 +12,7 @@ SimpleDrawJS is a lightweight, web-based rendition of the SimpleDraw Java progra
 
 ## Usage
 
-Visit the SimpleDrawJS [GitHub pages link](stuffbymack.github.io/stuffbymack.simpledrawjs.io/) to use the tool. Functionality mimics the Java version: select a color, create your artwork, save as PNG or clear the canvas.
+Visit the SimpleDrawJS [GitHub pages link]([stuffbymack.github.io/stuffbymack.simpledrawjs.io/](https://stuffbymack.github.io/stuffbymack.simpledrawjs.io/)) to use the tool. Functionality mimics the Java version: select a color, create your artwork, save as PNG or clear the canvas.
 
 ## License
 
