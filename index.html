@@ -1,153 +1,136 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=.70">
-    <style>
-        html, body {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-color: #EEEEEE; /* Background color set to HEX EEEEEE */
-        }
-
-        body {
-            width: 514px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        #paint-canvas {
-            background-color: white;
-        }
-
-        .color {
-            display: inline-block;
-            width: 36px; 
-            height: 36px; 
-            border: 0px solid black;
-            box-sizing: border-box;
-        }
-
-        #button-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px; /* Optional: To add some space between the buttons */
-        }
-
-    </style>
-</head>
-<body>
-    <main>
-        <button onclick="goBack()">Go Back</button>
-        <p>JavaScript implementation of SimpleDraw, view on <a href="https://github.com/stuffbymack/stuffbymack.simpledrawjs.io">GitHub</a></p>
-        <canvas id="paint-canvas" width="512" height="512"></canvas><br>
+   <head>
+      <meta name="viewport" content="width=device-width, initial-scale=.70">
+      <style>
+         html, body {
+         width: 100%;
+         height: 100%;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         margin: 0;
+         padding: 0;
+         overflow: hidden;
+         background-color: #EEEEEE; /* Background color set to HEX EEEEEE */
+         }
+         body {
+         width: 514px;
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         }
+         #paint-canvas {
+         background-color: white;
+         }
+         .color {
+         display: inline-block;
+         width: 36px; 
+         height: 36px; 
+         border: 0px solid black;
+         box-sizing: border-box;
+         }
+         #button-container {
+         display: flex;
+         justify-content: center;
+         gap: 10px; /* Optional: To add some space between the buttons */
+         }
+      </style>
+   </head>
+   <body>
+      <main>
+         <button onclick="goBack()">Go Back</button> <!-- JavaScript back button -->
+         <p>JavaScript implementation of SimpleDraw, view on <a href="https://github.com/stuffbymack/stuffbymack.simpledrawjs.io">GitHub</a></p>
+         <canvas id="paint-canvas" width="512" height="512"></canvas>
+         <br>
          <div id="button-container">
             <p><button id="save-btn">Export</button>
-                <button id="clear-btn">Clear</button></p>
-            </div>
-            <div id="color-palette"></div><br>
-    </main>
-
-    <script>
-        const colors = ['#000000', '#464646', '#787878', '#990030', '#ed1c24', '#ff7e00', '#ffc20e', '#fff200', '#a8e61d', '#22b14c', '#00b7ef', '#4d6df3', '#2f3699', '#6f3198', '#ffffff', '#dcdcdc', '#b4b4b4', '#9c5a3c', '#ffa3b1', '#e5aa7a', '#f5e49c', '#fffdbd', '#d3f9bc', '#9dbb61', '#99d9ea', '#7086d1', '#546d8e', '#b5a5d5'];
-        const canvas = document.getElementById('paint-canvas');
-        const ctx = canvas.getContext('2d');
-        const saveBtn = document.getElementById('save-btn');
-        const clearBtn = document.getElementById('clear-btn');
-        const colorPalette = document.getElementById('color-palette');
-
-        let painting = false;
-        let points = [];
-        ctx.strokeStyle = colors[0]; // default color is the first one
-
-        colors.forEach((color) => {
-            const colorDiv = document.createElement('div');
-            colorDiv.style.backgroundColor = color;
-            colorDiv.classList.add('color');
-            colorPalette.appendChild(colorDiv);
-        });
-
-        colorPalette.addEventListener('click', (e) => {
-            if (e.target.classList.contains('color')) {
-                ctx.strokeStyle = e.target.style.backgroundColor;
-            }
-        });
-
-        function startDraw(e) {
-            painting = true;
-            points = [];
-            draw(e);
-        }
-
-        function endDraw() {
-            painting = false;
-            points.length = 0;
-            ctx.beginPath();
-        }
-
-        function draw(e) {
-            if (!painting) return;
-            ctx.lineWidth = 15; // Change the brush size to 15
-            ctx.lineCap = 'round';
-
-            const { clientX, clientY } = e.touches ? e.touches[0] : e;
-            const offsetX = clientX - canvas.offsetLeft;
-            const offsetY = clientY - canvas.offsetTop;
-            points.push({ x: offsetX, y: offsetY });
-
-            ctx.beginPath();
-            ctx.moveTo(points[0].x, points[0].y);
-
-            for (let i = 1; i < points.length - 2; i++) {
-                let c = (points[i].x + points[i + 1].x) / 2;
-                let d = (points[i].y + points[i + 1].y) / 2;
-                ctx.quadraticCurveTo(points[i].x, points[i].y, c, d);
-            }
-
-            if (points.length > 1) {
-                ctx.quadraticCurveTo(points[points.length - 2].x, points[points.length - 2].y, points[points.length - 1].x, points[points.length - 1].y);
-            }
-            
-            ctx.stroke();
-        }
-
-        saveBtn.addEventListener('click', () => {
-            const newCanvas = document.createElement('canvas');
-            const newCtx = newCanvas.getContext('2d');
-            newCanvas.width = canvas.width;
-            newCanvas.height = canvas.height;
-            newCtx.fillStyle = '#FFFFFF';
-            newCtx.fillRect(0, 0, newCanvas.width, newCanvas.height);
-            newCtx.drawImage(canvas, 0, 0);
-            const dataUrl = newCanvas.toDataURL('image/png');
-            const newTab = window.open('about:blank', 'image from canvas');
-            newTab.document.write("<img src='" + dataUrl + "' alt='Canvas Image'/>");
-        });
-
-        clearBtn.addEventListener('click', () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        });
-
-        canvas.addEventListener('mousedown', startDraw);
-        canvas.addEventListener('mouseup', endDraw);
-        canvas.addEventListener('mousemove', draw);
-        canvas.addEventListener('touchstart', startDraw);
-        canvas.addEventListener('touchend', endDraw);
-        canvas.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-            draw(e);
-        }, { passive: false });
-
-        // JavaScript back button function
-        function goBack() {
-            window.history.back();
-        }
-    </script>
-</body>
+               <button id="clear-btn">Clear</button>
+            </p>
+         </div>
+         <div id="color-palette"></div>
+         <br>
+      </main>
+      <script>
+         const colors = ['#000000', '#464646', '#787878', '#990030', '#ed1c24', '#ff7e00', '#ffc20e', '#fff200', '#a8e61d', '#22b14c', '#00b7ef', '#4d6df3', '#2f3699', '#6f3198', '#ffffff', '#dcdcdc', '#b4b4b4', '#9c5a3c', '#ffa3b1', '#e5aa7a', '#f5e49c', '#fffdbd', '#d3f9bc', '#9dbb61', '#99d9ea', '#7086d1', '#546d8e', '#b5a5d5'];
+         const canvas = document.getElementById('paint-canvas');
+         const ctx = canvas.getContext('2d');
+         const saveBtn = document.getElementById('save-btn');
+         const clearBtn = document.getElementById('clear-btn');
+         const colorPalette = document.getElementById('color-palette');
+         
+         let painting = false;
+         ctx.strokeStyle = colors[0]; // default color is the first one
+         
+         colors.forEach((color) => {
+         const colorDiv = document.createElement('div');
+         colorDiv.style.backgroundColor = color;
+         colorDiv.classList.add('color');
+         colorPalette.appendChild(colorDiv);
+         });
+         
+         colorPalette.addEventListener('click', (e) => {
+         if (e.target.classList.contains('color')) {
+             ctx.strokeStyle = e.target.style.backgroundColor;
+         }
+         });
+         
+         function startDraw(e) {
+         painting = true;
+         draw(e);
+         }
+         
+         function endDraw() {
+         painting = false;
+         ctx.beginPath();
+         }
+         
+         function draw(e) {
+         if (!painting) return;
+         ctx.lineWidth = 15;
+         ctx.lineCap = 'round';
+         
+         const { clientX, clientY } = e.touches ? e.touches[0] : e;
+         const offsetX = clientX - canvas.offsetLeft;
+         const offsetY = clientY - canvas.offsetTop;
+         
+         ctx.lineTo(offsetX, offsetY);
+         ctx.stroke();
+         ctx.beginPath();
+         ctx.moveTo(offsetX, offsetY);
+         }
+         
+         saveBtn.addEventListener('click', () => {
+         const newCanvas = document.createElement('canvas');
+         const newCtx = newCanvas.getContext('2d');
+         newCanvas.width = canvas.width;
+         newCanvas.height = canvas.height;
+         newCtx.fillStyle = '#FFFFFF';
+         newCtx.fillRect(0, 0, newCanvas.width, newCanvas.height);
+         newCtx.drawImage(canvas, 0, 0);
+         const dataUrl = newCanvas.toDataURL('image/png');
+         const newTab = window.open('about:blank', 'image from canvas');
+         newTab.document.write("<img src='" + dataUrl + "' alt='Canvas Image'/>");
+         });
+         
+         clearBtn.addEventListener('click', () => {
+         ctx.clearRect(0, 0, canvas.width, canvas.height);
+         });
+         
+         canvas.addEventListener('mousedown', startDraw);
+         canvas.addEventListener('mouseup', endDraw);
+         canvas.addEventListener('mousemove', draw);
+         canvas.addEventListener('touchstart', startDraw);
+         canvas.addEventListener('touchend', endDraw);
+         canvas.addEventListener('touchmove', (e) => {
+         e.preventDefault();
+         draw(e);
+         }, { passive: false });
+         
+         // JavaScript back button function
+         function goBack() {
+         window.history.back();
+         }
+      </script>
+   </body>
 </html>
