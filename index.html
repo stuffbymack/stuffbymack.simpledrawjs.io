@@ -43,8 +43,12 @@
    </head>
    <body>
       <main>
-         <button onclick="goBack()">Go Back</button> <!-- JavaScript back button -->
-         <p>JavaScript implementation of SimpleDraw, view on <a href="https://github.com/stuffbymack/stuffbymack.simpledrawjs.io">GitHub</a></p>
+         <div id="button-container">
+         <p><button onclick="goBack()">Go Back</button></p> <!-- JavaScript back button -->
+         </div>
+         <div id="button-container">
+         <p><small>JavaScript implementation of SimpleDraw</small></p>
+         </div>
          <canvas id="paint-canvas" width="512" height="512"></canvas>
          <br>
          <div id="button-container">
