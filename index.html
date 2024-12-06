@@ -13,7 +13,7 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #eeeeee;
+            background-color: #edf8fc;
          }
          body {
             width: 514px;
@@ -213,7 +213,24 @@
             },
             { passive: false }
          );
-         // JavaScript back button function
+         canvas.addEventListener("mouseleave", () => {
+            if (painting) {
+                endDraw(); // Stop drawing if the pointer leaves the canvas
+            }
+        });
+
+        canvas.addEventListener("mouseenter", (e) => {
+            if (e.buttons === 1) { // Left mouse button is pressed
+                painting = true; // Resume drawing
+                const rect = canvas.getBoundingClientRect();
+                const offsetX = e.clientX - rect.left;
+                const offsetY = e.clientY - rect.top;
+                ctx.beginPath();
+                ctx.moveTo(offsetX, offsetY); // Start a new line at the current mouse position
+            }
+        });
+
+        // JavaScript back button function
          function goBack() {
          window.history.back();
          }
